@@ -1,4 +1,6 @@
 package bgu.spl.mics;
+import bgu.spl.mics.application.messages.AttackEvent;
+
 import javax.swing.text.StyledEditorKit;
 import java.util.HashMap;
 import java.util.Queue;
@@ -22,7 +24,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		
+
 	}
 
 	@Override
