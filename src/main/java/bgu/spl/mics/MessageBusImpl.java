@@ -12,6 +12,13 @@ import java.util.Queue;
  */
 public class MessageBusImpl implements MessageBus {
 
+	private HashMap<String, MicroService> ms_hash;
+
+	public MessageBusImpl()
+	{
+		ms_hash = new HashMap<>();
+	}
+
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		
@@ -41,12 +48,12 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void register(MicroService m) {
-		
+		ms_hash.put(m.getName(),m);
 	}
 
 	@Override
 	public void unregister(MicroService m) {
-		
+		ms_hash.remove(m.getName());
 	}
 
 	@Override
