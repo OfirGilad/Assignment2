@@ -61,4 +61,11 @@ public class MessageBusImpl implements MessageBus {
 		
 		return null;
 	}
+
+	//TODO: Implement class to be Singleton
+	//Code Not final
+	public static MessageBusImpl getInstance() {
+		return new MessageBusImpl();
+	}
+
 }
