@@ -11,9 +11,11 @@ import bgu.spl.mics.MicroService;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class R2D2Microservice extends MicroService {
+    long duration;
 
     public R2D2Microservice(long duration) {
         super("R2D2");
+        this.duration = duration;
     }
 
     @Override

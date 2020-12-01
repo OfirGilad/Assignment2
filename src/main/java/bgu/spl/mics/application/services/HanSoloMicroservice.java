@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.services;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.passiveObjects.Attack;
+import bgu.spl.mics.example.messages.ExampleEvent;
 
 /**
  * HanSoloMicroservices is in charge of the handling {@link AttackEvent}.
@@ -19,6 +21,21 @@ public class HanSoloMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
+        subscribeEvent(AttackEvent.class, eventCallBack -> {
+            Attack attack = eventCallBack.getAttack();
+            int numberOfCompletedAttacks = 0;
+            while (numberOfCompletedAttacks != attack.getSerials().size()) {
+                for (int i = 0; i < attack.getSerials().size(); i++) {
+                    //Get Ewok
 
+                    try {
+                        HanSoloMicroservice.this.wait((long) (attack.getDuration()));
+                        complete(eventCallBack, true);
+                    } catch (InterruptedException e) {
+                        //MissionFailed
+                    }
+                }
+            }
+        });
     }
 }

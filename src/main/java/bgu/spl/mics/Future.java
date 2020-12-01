@@ -31,7 +31,7 @@ public class Future<T> {
      * 	       
      */
 	public T get() {
-		while (!isDone) {
+		while (result == null) {
 			try {
 				wait();
 			}
@@ -67,13 +67,11 @@ public class Future<T> {
      *         elapsed, return null.
      */
 	public T get(long timeout, TimeUnit unit) {
-		try {
-			unit.wait(timeout);
+		if (result == null) {
+			try {
+				unit.wait(timeout);
+			} catch (InterruptedException ignored) { }
 		}
-		catch (InterruptedException e) {
-			return result;
-		}
-		return null;
+		return result;
 	}
-
 }
