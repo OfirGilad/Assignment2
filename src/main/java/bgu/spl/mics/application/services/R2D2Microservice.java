@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.passiveObjects.Attack;
 
 /**
  * R2D2Microservices is in charge of the handling {@link DeactivationEvent}.
@@ -20,6 +21,16 @@ public class R2D2Microservice extends MicroService {
 
     @Override
     protected void initialize() {
+        subscribeEvent(DeactivationEvent.class, eventCallBack -> {
+            try {
+                R2D2Microservice.this.wait(duration);
+                complete(eventCallBack, true);
+            }
+            catch (InterruptedException e) {
+                //MissionFailed
+            }
+        });
+
 
     }
 }

@@ -2,11 +2,11 @@ package bgu.spl.mics.application.passiveObjects;
 
 public class Input {
 	private Attack[] attacks;
-	int R2D2;
-	int Lando;
-	int Ewoks;
+	private int R2D2;
+	private int Lando;
+	private static int Ewoks;
 	
-	public int getEwoks() {
+	public static int getEwoks() {
 		return Ewoks;
 	}
 	public void setEwoks(int ewoks) {
