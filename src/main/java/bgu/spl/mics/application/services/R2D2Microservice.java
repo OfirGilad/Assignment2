@@ -2,6 +2,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.Attack;
+import bgu.spl.mics.application.passiveObjects.Diary;
 
 /**
  * R2D2Microservices is in charge of the handling {@link DeactivationEvent}.
@@ -21,16 +22,26 @@ public class R2D2Microservice extends MicroService {
 
     @Override
     protected void initialize() {
-        subscribeEvent(DeactivationEvent.class, eventCallBack -> {
-            try {
-                R2D2Microservice.this.wait(duration);
-                complete(eventCallBack, true);
+        subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
+            if (!broadcastCallBack.getMissionProgress()) {
+                Diary.setR2D2Terminate(System.currentTimeMillis());
+                terminate();
             }
-            catch (InterruptedException e) {
-                //MissionFailed
+            else {
+                subscribeEvent(DeactivationEvent.class, eventCallBack -> {
+                    boolean isDone = false;
+                    while (!isDone) {
+                        try {
+                            R2D2Microservice.this.wait(duration);
+                            complete(eventCallBack, true);
+                            Diary.setR2D2Deactivate(System.currentTimeMillis());
+                            isDone = true;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
-
-
     }
 }

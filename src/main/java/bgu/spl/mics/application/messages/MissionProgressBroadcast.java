@@ -2,19 +2,17 @@ package bgu.spl.mics.application.messages;
 
 import bgu.spl.mics.Broadcast;
 
-//Sends the phase of the Mission:
-//"Attack = Time for Han + C3PO to act"
-//"Deactivate" = Time for R2D2 to act
-//"Bomb" = Time for Lando to act
-//"Complete" = Everyone terminate themselves
+//Sends the status of the Mission:
+//"true" = Mission in progress and everyone can start to act
+//"false" = Mission completed and everyone can terminate themselves
 public class MissionProgressBroadcast implements Broadcast {
-    private final String phaseInfo;
+    private final Boolean missionProgress;
 
-    public MissionProgressBroadcast(String phaseInfo) {
-        this.phaseInfo = phaseInfo;
+    public MissionProgressBroadcast(Boolean missionProgress) {
+        this.missionProgress = missionProgress;
     }
 
-    public String getPhaseInfo() {
-        return phaseInfo;
+    public Boolean getMissionProgress() {
+        return missionProgress;
     }
 }

@@ -1,5 +1,6 @@
 package bgu.spl.mics.application;
 
+import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 import bgu.spl.mics.application.passiveObjects.Input;
 import bgu.spl.mics.application.passiveObjects.JsonInputReader;
@@ -15,7 +16,8 @@ import java.io.IOException;
 public class Main {
 	public static void main(String[] args) throws IOException {
 		Input input = JsonInputReader.getInputFromJson("input.json");
-		System.out.println(input.getEwoks());
+		//System.out.println(input.getEwoks());
+		Diary.setTotalAttacks(input.getAttacks().length);
 		LeiaMicroservice Leia = new LeiaMicroservice(input.getAttacks());
 		HanSoloMicroservice HanSolo = new HanSoloMicroservice();
 		C3POMicroservice C3PO = new C3POMicroservice();

@@ -2,6 +2,8 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
+import bgu.spl.mics.application.messages.MissionProgressBroadcast;
+import bgu.spl.mics.application.passiveObjects.Diary;
 
 /**
  * LandoMicroservice
@@ -18,13 +20,24 @@ public class LandoMicroservice  extends MicroService {
 
     @Override
     protected void initialize() {
-        subscribeEvent(BombDestroyerEvent.class, eventCallBack -> {
-            try {
-                LandoMicroservice.this.wait(duration);
-                complete(eventCallBack, true);
+        subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
+            if (!broadcastCallBack.getMissionProgress()) {
+                Diary.setLandoTerminate(System.currentTimeMillis());
+                terminate();
             }
-            catch (InterruptedException e) {
-                //MissionFailed
+            else {
+                subscribeEvent(BombDestroyerEvent.class, eventCallBack -> {
+                    boolean isDone = false;
+                    while (!isDone) {
+                        try {
+                            LandoMicroservice.this.wait(duration);
+                            complete(eventCallBack, true);
+                            isDone = true;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }

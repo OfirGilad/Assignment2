@@ -1,0 +1,21 @@
+{
+
+"totalAttacks": 2,
+
+"HanSoloFinish": 1000,
+
+"C3POFinish": 2000,
+
+"R2D2Deactivate": 4000,
+
+"LeiaTerminate": 6000,
+
+"HanSoloTerminate": 6000,
+
+"C3POTerminate": 6000,
+
+"R2D2Terminate": 6000,
+
+"LandoTerminate": 6000
+
+}

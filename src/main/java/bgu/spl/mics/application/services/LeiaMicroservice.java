@@ -1,13 +1,12 @@
 package bgu.spl.mics.application.services;
-import bgu.spl.mics.Future;
-import bgu.spl.mics.MessageBus;
+import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Attack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.passiveObjects.Diary;
 
 /**
  * LeiaMicroservices Initialized with Attack objects, and sends them as  {@link AttackEvent}.
@@ -35,51 +34,62 @@ public class LeiaMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
-        for (int i = 0; i < attacks.length; i ++) {
-            futureAttacks[i] = sendEvent(attackEvents[i]);
-        }
+        //Declaring the Start
+        sendBroadcast(new MissionProgressBroadcast(true));
+        subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
 
-        //Attack Phase
-        int numberOfFinishedAttacks = 0;
-        while (numberOfFinishedAttacks != attackEvents.length) {
-            for (int i = 0; i < attacks.length; i ++) {
-                if (futureAttacks[i] != null) {
-                    if (!futureAttacks[i].isDone()) {
-                        Boolean resolved = futureAttacks[i].get((long) (attacks[i].getDuration()), TimeUnit.MILLISECONDS);
-                        if (resolved != null) {
-                            futureAttacks[i].resolve(resolved);
-                            numberOfFinishedAttacks++;
+            if(!broadcastCallBack.getMissionProgress()) {
+                Diary.setLeiaTerminate(System.currentTimeMillis());
+                terminate();
+            }
+            else {
+
+                //Attack Phase
+                for (int i = 0; i < attacks.length; i++) {
+                    futureAttacks[i] = sendEvent(attackEvents[i]);
+                }
+                int numberOfFinishedAttacks = 0;
+                while (numberOfFinishedAttacks != attackEvents.length) {
+                    for (int i = 0; i < attacks.length; i++) {
+                        if (futureAttacks[i] != null) {
+                            if (!futureAttacks[i].isDone()) {
+                                Boolean resolved = futureAttacks[i].get((long) (attacks[i].getDuration()), TimeUnit.MILLISECONDS);
+                                if (resolved != null) {
+                                    futureAttacks[i].resolve(resolved);
+                                    numberOfFinishedAttacks++;
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
 
-        //Deactivation Phase
-        DeactivationEvent deactivationEvent = new DeactivationEvent(super.getName());
-        Future<Boolean> futureDeactivation = sendEvent(deactivationEvent);
-        boolean isDeactivationEventInProgress = true;
-        while (isDeactivationEventInProgress) {
-            if (futureDeactivation != null) {
-                Boolean resolved = futureDeactivation.get();
-                futureDeactivation.resolve(resolved);
-                isDeactivationEventInProgress = false;
-            }
-        }
+                //Deactivation Phase
+                DeactivationEvent deactivationEvent = new DeactivationEvent(super.getName());
+                Future<Boolean> futureDeactivation = sendEvent(deactivationEvent);
+                boolean isDeactivationEventInProgress = true;
+                while (isDeactivationEventInProgress) {
+                    if (futureDeactivation != null) {
+                        Boolean resolved = futureDeactivation.get();
+                        futureDeactivation.resolve(resolved);
+                        isDeactivationEventInProgress = false;
+                    }
+                }
 
-        //BombDestroyer Phase
-        BombDestroyerEvent bombDestroyerEvent = new BombDestroyerEvent(super.getName());
-        Future<Boolean> futureBombDestroyer = sendEvent(bombDestroyerEvent);
-        boolean isBombDestroyerEventInProgress = true;
-        while (isBombDestroyerEventInProgress) {
-            if (futureBombDestroyer != null) {
-                Boolean resolved = futureBombDestroyer.get();
-                futureBombDestroyer.resolve(resolved);
-                isBombDestroyerEventInProgress = false;
-            }
-        }
+                //BombDestroyer Phase
+                BombDestroyerEvent bombDestroyerEvent = new BombDestroyerEvent(super.getName());
+                Future<Boolean> futureBombDestroyer = sendEvent(bombDestroyerEvent);
+                boolean isBombDestroyerEventInProgress = true;
+                while (isBombDestroyerEventInProgress) {
+                    if (futureBombDestroyer != null) {
+                        Boolean resolved = futureBombDestroyer.get();
+                        futureBombDestroyer.resolve(resolved);
+                        isBombDestroyerEventInProgress = false;
+                    }
+                }
 
-        //Mission Complete
-        terminate();
+                //Mission Complete
+                sendBroadcast(new MissionProgressBroadcast(false));
+            }
+        });
     }
 }
