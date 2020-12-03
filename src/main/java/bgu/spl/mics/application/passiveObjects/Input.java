@@ -6,7 +6,7 @@ public class Input {
 	private int Lando;
 	private static int Ewoks;
 	
-	public static int getEwoks() {
+	public int getEwoks() {
 		return Ewoks;
 	}
 	public void setEwoks(int ewoks) {
