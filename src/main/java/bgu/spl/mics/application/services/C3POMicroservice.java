@@ -37,21 +37,26 @@ public class C3POMicroservice extends MicroService {
             }
         });
         subscribeEvent(AttackEvent.class, eventCallBack -> {
-            Attack attack = eventCallBack.getAttack();
+            Attack C3POAttack = eventCallBack.getAttack();
             int attackNumber = 0;
-            while (attackNumber != attack.getSerials().size()) {
-                ewoks.acquireEwok(attack.getSerials().get(attackNumber));
-                try {
-                    C3POMicroservice.this.wait((long) (attack.getDuration()));
-                    complete(eventCallBack, true);
-                    ewoks.releaseEwok(attack.getSerials().get(attackNumber));
-                    attackNumber++;
+            boolean isDone = false;
+            while (!isDone) {
+                if (attackNumber != C3POAttack.getSerials().size()) {
+                    ewoks.acquireEwok(C3POAttack.getSerials().get(attackNumber));
+                    try {
+                        Thread.sleep(C3POAttack.getDuration());
+                        complete(eventCallBack, true);
+                        diary.setC3POFinish(System.currentTimeMillis());
+                        ewoks.releaseEwok(C3POAttack.getSerials().get(attackNumber));
+                        attackNumber++;
+                    } catch (InterruptedException e) {
+                        ewoks.releaseEwok(C3POAttack.getSerials().get(attackNumber));
+                    }
                 }
-                catch (InterruptedException e) {
-                    ewoks.releaseEwok(attack.getSerials().get(attackNumber));
+                else {
+                    isDone = true;
                 }
             }
-            diary.setC3POFinish(System.currentTimeMillis());
         });
         waitForAllToSubEvents.countDown();
     }

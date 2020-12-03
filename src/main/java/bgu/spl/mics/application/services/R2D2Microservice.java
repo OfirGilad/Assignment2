@@ -37,11 +37,12 @@ public class R2D2Microservice extends MicroService {
             boolean isDone = false;
             while (!isDone) {
                 try {
-                    R2D2Microservice.this.wait(duration);
+                    Thread.sleep(duration);
                     complete(eventCallBack, true);
                     diary.setR2D2Deactivate(System.currentTimeMillis());
                     isDone = true;
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }

@@ -34,21 +34,26 @@ public class HanSoloMicroservice extends MicroService {
            }
         });
         subscribeEvent(AttackEvent.class, eventCallBack -> {
-            Attack attack = eventCallBack.getAttack();
+            Attack HanSoloAttack = eventCallBack.getAttack();
             int attackNumber = 0;
-            while (attackNumber != attack.getSerials().size()) {
-                ewoks.acquireEwok(attack.getSerials().get(attackNumber));
-                try {
-                    HanSoloMicroservice.this.wait((long) (attack.getDuration()));
-                    complete(eventCallBack, true);
-                    ewoks.releaseEwok(attack.getSerials().get(attackNumber));
-                    attackNumber++;
+            boolean isDone = false;
+            while (!isDone) {
+                if (attackNumber != HanSoloAttack.getSerials().size()) {
+                    ewoks.acquireEwok(HanSoloAttack.getSerials().get(attackNumber));
+                    try {
+                        Thread.sleep(HanSoloAttack.getDuration());
+                        complete(eventCallBack, true);
+                        diary.setHanSoloFinish(System.currentTimeMillis());
+                        ewoks.releaseEwok(HanSoloAttack.getSerials().get(attackNumber));
+                        attackNumber++;
+                    } catch (InterruptedException e) {
+                        ewoks.releaseEwok(HanSoloAttack.getSerials().get(attackNumber));
+                    }
                 }
-                catch (InterruptedException e) {
-                    ewoks.releaseEwok(attack.getSerials().get(attackNumber));
+                else {
+                    isDone = true;
                 }
             }
-            diary.setHanSoloFinish(System.currentTimeMillis());
         });
         waitForAllToSubEvents.countDown();
     }

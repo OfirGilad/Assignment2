@@ -36,10 +36,11 @@ public class LandoMicroservice  extends MicroService {
             boolean isDone = false;
             while (!isDone) {
                 try {
-                    LandoMicroservice.this.wait(duration);
+                    Thread.sleep(duration);
                     complete(eventCallBack, true);
                     isDone = true;
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }

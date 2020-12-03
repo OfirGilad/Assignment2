@@ -22,6 +22,7 @@ public class LeiaMicroservice extends MicroService {
 	private final Future<Boolean>[] futureAttacks;
 	private final Diary diary;
 
+
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
 		this.attacks = attacks;
@@ -63,25 +64,26 @@ public class LeiaMicroservice extends MicroService {
         }
 
         //Deactivation Phase
+        Future<Boolean> eventResult;
         DeactivationEvent deactivationEvent = new DeactivationEvent(super.getName());
-        Future<Boolean> futureDeactivation = sendEvent(deactivationEvent);
+        eventResult = sendEvent(deactivationEvent);
         boolean isDeactivationEventInProgress = true;
         while (isDeactivationEventInProgress) {
-            if (futureDeactivation != null) {
-                Boolean resolved = futureDeactivation.get();
-                futureDeactivation.resolve(resolved);
+            if (eventResult != null) {
+                Boolean resolved = eventResult.get();
+                eventResult.resolve(resolved);
                 isDeactivationEventInProgress = false;
             }
         }
 
         //BombDestroyer Phase
         BombDestroyerEvent bombDestroyerEvent = new BombDestroyerEvent(super.getName());
-        Future<Boolean> futureBombDestroyer = sendEvent(bombDestroyerEvent);
+        eventResult = sendEvent(bombDestroyerEvent);
         boolean isBombDestroyerEventInProgress = true;
         while (isBombDestroyerEventInProgress) {
-            if (futureBombDestroyer != null) {
-                Boolean resolved = futureBombDestroyer.get();
-                futureBombDestroyer.resolve(resolved);
+            if (eventResult != null) {
+                Boolean resolved = eventResult.get();
+                eventResult.resolve(resolved);
                 isBombDestroyerEventInProgress = false;
             }
         }
