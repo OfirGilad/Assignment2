@@ -47,11 +47,13 @@ public class HanSoloMicroservice extends MicroService {
                         ewoks.releaseEwok(HanSoloAttack.getSerials().get(attackNumber));
                         attackNumber++;
                     } catch (InterruptedException e) {
+                        System.out.println(getName() + " failed to complete the attack event... Releasing ewok");
                         ewoks.releaseEwok(HanSoloAttack.getSerials().get(attackNumber));
                     }
                 }
                 else {
                     isDone = true;
+                    diary.incrementTotalAttacks();
                 }
             }
         });

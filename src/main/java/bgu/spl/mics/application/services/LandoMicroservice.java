@@ -41,7 +41,7 @@ public class LandoMicroservice  extends MicroService {
                     isDone = true;
                 }
                 catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.out.println(getName() + " failed to complete the bomb destroyer event...");
                 }
             }
         });

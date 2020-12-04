@@ -43,7 +43,7 @@ public class R2D2Microservice extends MicroService {
                     isDone = true;
                 }
                 catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.out.println(getName() + " failed to complete the deactivation event...");
                 }
             }
         });

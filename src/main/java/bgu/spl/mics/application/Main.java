@@ -19,11 +19,11 @@ public class Main {
 		Input input = JsonInputReader.getInputFromJson("input.json");
 		//System.out.println(input.getEwoks());
 
+		//Importing data from json input
 		Ewoks ewoks = Ewoks.getInstance();
 		ewoks.allocateEwoks(input.getEwoks());
-		Diary diary = Diary.getInstance();
-		diary.setTotalAttacks(input.getAttacks().length);
 
+		//Microservices construction
 		CountDownLatch waitForAllToSubEvents = new CountDownLatch(4);
 		LeiaMicroservice Leia = new LeiaMicroservice(input.getAttacks());
 		HanSoloMicroservice HanSolo = new HanSoloMicroservice(waitForAllToSubEvents);
@@ -31,12 +31,28 @@ public class Main {
 		R2D2Microservice R2D2 = new R2D2Microservice(input.getR2D2(), waitForAllToSubEvents);
 		LandoMicroservice Lando = new LandoMicroservice(input.getLando(), waitForAllToSubEvents);
 
-		HanSolo.run();
-		C3PO.run();
-		R2D2.run();
-		Lando.run();
+		//Threads declaration
+		Thread LeiaThread = new Thread(Leia);
+		Thread HanSoloThread = new Thread(HanSolo);
+		Thread C3POThread = new Thread(C3PO);
+		Thread R2D2Thread = new Thread(R2D2);
+		Thread LandoThread = new Thread(Lando);
+
+		//Threads activation
+		HanSoloThread.start();
+		C3POThread.start();
+		R2D2Thread.start();
+		LandoThread.start();
 		waitForAllToSubEvents.await();
-		Leia.run();
+		LeiaThread.start();
+
+		HanSoloThread.join();
+		C3POThread.join();
+		R2D2Thread.join();
+		LandoThread.join();
+		LeiaThread.join();
+
+
 
 	}
 }

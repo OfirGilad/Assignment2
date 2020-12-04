@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Passive data-object representing a Diary - in which the flow of the battle is recorded.
  * We are going to compare your recordings with the expected recordings, and make sure that your output makes sense.
@@ -8,7 +10,7 @@ package bgu.spl.mics.application.passiveObjects;
  * Do not add to this class nothing but a single constructor, getters and setters.
  */
 public class Diary {
-    private int totalAttacks;
+    private final AtomicInteger totalAttacks;
     private long HanSoloFinish;
     private long C3POFinish;
     private long R2D2Deactivate;
@@ -21,7 +23,7 @@ public class Diary {
     private static Diary diaryInstance = null;
 
     private Diary() {
-
+        totalAttacks = new AtomicInteger(0);
     }
 
     public static Diary getInstance() {
@@ -32,7 +34,7 @@ public class Diary {
     }
 
     public int getTotalAttacks() {
-        return totalAttacks;
+        return totalAttacks.get();
     }
 
     public long getHanSoloFinish() {
@@ -67,8 +69,8 @@ public class Diary {
         return LandoTerminate;
     }
 
-    public void setTotalAttacks(int totalAttacks) {
-        this.totalAttacks = totalAttacks;
+    public void incrementTotalAttacks() {
+        totalAttacks.getAndIncrement();
     }
 
     public void setHanSoloFinish(long hanSoloFinish) {

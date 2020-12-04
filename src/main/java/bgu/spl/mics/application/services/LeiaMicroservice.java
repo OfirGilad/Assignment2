@@ -89,6 +89,7 @@ public class LeiaMicroservice extends MicroService {
         }
 
         //Mission Complete
-        sendBroadcast(new MissionProgressBroadcast(false));
+        MissionProgressBroadcast missionCompletedBroadcast = new MissionProgressBroadcast(false);
+        sendBroadcast(missionCompletedBroadcast);
     }
 }

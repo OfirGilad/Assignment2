@@ -50,11 +50,13 @@ public class C3POMicroservice extends MicroService {
                         ewoks.releaseEwok(C3POAttack.getSerials().get(attackNumber));
                         attackNumber++;
                     } catch (InterruptedException e) {
+                        System.out.println(getName() + " failed to complete the attack event... Releasing ewok");
                         ewoks.releaseEwok(C3POAttack.getSerials().get(attackNumber));
                     }
                 }
                 else {
                     isDone = true;
+                    diary.incrementTotalAttacks();
                 }
             }
         });
