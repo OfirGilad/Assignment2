@@ -26,7 +26,7 @@ public class MessageBusTest {
 
     @BeforeEach
     public void setUp(){
-        messageBus = new MessageBusImpl();
+        messageBus = MessageBusImpl.getInstance();
         firstBroadcastListenerService = new ExampleBroadcastListenerService("broadcastListenerService", new String[]{"1"});
         secondBroadcastListenerService = new ExampleBroadcastListenerService("broadcastListenerService", new String[]{"1"});
         eventHandlerService = new ExampleEventHandlerService("eventHandlerService", new String[]{"1"});
