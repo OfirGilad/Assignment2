@@ -34,17 +34,13 @@ public class R2D2Microservice extends MicroService {
             }
         });
         subscribeEvent(DeactivationEvent.class, eventCallBack -> {
-            boolean isDone = false;
-            while (!isDone) {
-                try {
-                    Thread.sleep(duration);
-                    complete(eventCallBack, true);
-                    diary.setR2D2Deactivate(System.currentTimeMillis());
-                    isDone = true;
-                }
-                catch (InterruptedException e) {
-                    System.out.println(getName() + " failed to complete the deactivation event...");
-                }
+            try {
+                Thread.sleep(duration);
+                diary.setR2D2Deactivate(System.currentTimeMillis());
+                complete(eventCallBack, true);
+            }
+            catch (InterruptedException e) {
+                complete(eventCallBack, false);
             }
         });
         waitForAllToSubEvents.countDown();

@@ -21,7 +21,7 @@ public class LeiaMicroservice extends MicroService {
 	private final AttackEvent[] attackEvents;
 	private final Future<Boolean>[] futureAttacks;
 	private final Diary diary;
-
+	private Boolean bombDestroyerEventResult;
 
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
@@ -29,7 +29,7 @@ public class LeiaMicroservice extends MicroService {
 		this.attackEvents = new AttackEvent[attacks.length];
 		this.futureAttacks = new Future[attacks.length];
         diary = Diary.getInstance();
-
+        bombDestroyerEventResult = false;
         for (int i = 0; i < attacks.length; i ++) {
             attackEvents[i] = new AttackEvent(super.getName(), attacks[i]);
         }
@@ -43,53 +43,28 @@ public class LeiaMicroservice extends MicroService {
                 terminate();
             }
         });
-
         //Attack Phase
         for (int i = 0; i < attacks.length; i++) {
             futureAttacks[i] = sendEvent(attackEvents[i]);
         }
-        int numberOfFinishedAttacks = 0;
-        while (numberOfFinishedAttacks != attackEvents.length) {
-            for (int i = 0; i < attacks.length; i++) {
-                if (futureAttacks[i] != null) {
-                    if (!futureAttacks[i].isDone()) {
-                        Boolean resolved = futureAttacks[i].get(attacks[i].getDuration(), TimeUnit.MILLISECONDS);
-                        if (resolved != null) {
-                            futureAttacks[i].resolve(resolved);
-                            numberOfFinishedAttacks++;
-                        }
-                    }
-                }
+        int attacksIndex = 0;
+        while (attacksIndex < attacks.length) {
+            Object attackResult = futureAttacks[attacksIndex].get();
+            if (attackResult.equals(false)){
+                attackEvents[attacksIndex] = new AttackEvent(super.getName(), attacks[attacksIndex]);
+            }
+            else {
+                attacksIndex++;
             }
         }
-
-        //Deactivation Phase
-        Future<Boolean> eventResult;
-        DeactivationEvent deactivationEvent = new DeactivationEvent(super.getName());
-        eventResult = sendEvent(deactivationEvent);
-        boolean isDeactivationEventInProgress = true;
-        while (isDeactivationEventInProgress) {
-            if (eventResult != null) {
-                Boolean resolved = eventResult.get();
-                eventResult.resolve(resolved);
-                isDeactivationEventInProgress = false;
+        //BombDestroyer Phase (Lando sends Deactivation request to R2D2)
+        while (!bombDestroyerEventResult) {
+            BombDestroyerEvent bombDestroyerEvent = new BombDestroyerEvent(super.getName());
+            Future<Boolean> bombDestroyerFutureResult = sendEvent(bombDestroyerEvent);
+            Object bombDestroyerResult = bombDestroyerFutureResult.get();
+            if (bombDestroyerResult.equals(true)){
+                bombDestroyerEventResult = true;
             }
         }
-
-        //BombDestroyer Phase
-        BombDestroyerEvent bombDestroyerEvent = new BombDestroyerEvent(super.getName());
-        eventResult = sendEvent(bombDestroyerEvent);
-        boolean isBombDestroyerEventInProgress = true;
-        while (isBombDestroyerEventInProgress) {
-            if (eventResult != null) {
-                Boolean resolved = eventResult.get();
-                eventResult.resolve(resolved);
-                isBombDestroyerEventInProgress = false;
-            }
-        }
-
-        //Mission Complete
-        MissionProgressBroadcast missionCompletedBroadcast = new MissionProgressBroadcast(false);
-        sendBroadcast(missionCompletedBroadcast);
     }
 }

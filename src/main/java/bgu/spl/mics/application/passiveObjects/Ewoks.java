@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.util.List;
 
 /**
  * Passive object representing the resource manager.
@@ -32,20 +33,37 @@ public class Ewoks {
         }
     }
 
-    public synchronized void acquireEwok(int ewokSerialNumber) {
-        while (!ewoks[ewokSerialNumber - 1].isAvailable()) {
-            try {
-                wait();
+    public synchronized Boolean acquireEwoks(List<Integer> ewokSerialNumbers) {
+        int ewokIndex = 0;
+
+        //Checking if all needed ewoks are available
+        while (ewokIndex < ewokSerialNumbers.size()) {
+
+            //If at least one needed ewok is unavailable, entering waiting room
+            //After notification received checking all over again if all the needed ewoks are available
+            //InterruptedException causing a mission failure
+            if (!ewoks[ewokSerialNumbers.get(ewokIndex)].isAvailable()) {
+                try {
+                    wait();
+                    ewokIndex = 0;
+                } catch (InterruptedException e) {
+                    return false;
+                }
             }
-            catch (InterruptedException e) {
-                e.printStackTrace();
+            else {
+                ewokIndex++;
             }
         }
-        ewoks[ewokSerialNumber - 1].acquire();
+        for (Integer ewokSerialNumber : ewokSerialNumbers) {
+            ewoks[ewokSerialNumber].acquire();
+        }
+        return true;
     }
 
-    public synchronized void releaseEwok(int ewokSerialNumber) {
-        ewoks[ewokSerialNumber - 1].release();
+    public synchronized void releaseEwoks(List<Integer> ewokSerialNumbers) {
+        for (Integer ewokSerialNumber : ewokSerialNumbers) {
+            ewoks[ewokSerialNumber].release();
+        }
         notifyAll();
     }
 
