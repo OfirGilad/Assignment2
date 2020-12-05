@@ -1,9 +1,9 @@
 package bgu.spl.mics;
-import bgu.spl.mics.application.messages.AttackEvent;
 
-import javax.swing.text.StyledEditorKit;
-import java.util.HashMap;
-import java.util.Queue;
+import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -12,26 +12,36 @@ import java.util.Queue;
  */
 public class MessageBusImpl implements MessageBus {
 
-	private HashMap<String, MicroService> ms_hash;
+	private ConcurrentHashMap<MicroService, MicSerQueue> servises;
+	private ConcurrentHashMap<Class <? extends Event>,BlockingQueue<MicroService>> round_robin;
+	private ConcurrentHashMap<Event, Future> future;
 
 	public MessageBusImpl()
 	{
-		ms_hash = new HashMap<>();
+		servises = new ConcurrentHashMap<>();
+		round_robin = new ConcurrentHashMap<>();
+		future = new ConcurrentHashMap<>();
 	}
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		
+		//TODO:check if micrcoservice in registered
+		round_robin.get(type).add(m);
+		servises.get(m).subscribed_event.offer(type);
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		
+		//TODO:check if micrcoservice in registered
+		servises.get(m).subscribed_broadcast.offer(type);
     }
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-
+		Future f = future.get(e);
+		if (f!=null)
+			f.resolve(result);
+		future.remove(e,f);
 	}
 
 	@Override
@@ -48,12 +58,12 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void register(MicroService m) {
-		ms_hash.put(m.getName(),m);
+		servises.putIfAbsent(m,new MicSerQueue());
 	}
 
 	@Override
 	public void unregister(MicroService m) {
-		ms_hash.remove(m.getName());
+		servises.remove(m);
 	}
 
 	@Override
@@ -68,4 +78,17 @@ public class MessageBusImpl implements MessageBus {
 		return new MessageBusImpl();
 	}
 
+}
+class MicSerQueue{
+	public BlockingQueue<Event> eventQ;
+	public BlockingQueue<Class <? extends Event>> subscribed_event;
+	public BlockingQueue<Class <? extends Broadcast>> subscribed_broadcast;
+
+
+	public MicSerQueue()
+	{
+		this.eventQ= new LinkedBlockingQueue<Event>();
+		this.subscribed_event = new LinkedBlockingQueue<Class <? extends Event>>();
+		this.subscribed_broadcast = new LinkedBlockingQueue<Class <? extends Broadcast>>();
+	}
 }
