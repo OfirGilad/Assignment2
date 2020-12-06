@@ -26,7 +26,7 @@ public class Diary {
         totalAttacks = new AtomicInteger(0);
     }
 
-    public static Diary getInstance() {
+    public synchronized static Diary getInstance() {
         if (diaryInstance == null) {
             diaryInstance = new Diary();
         }

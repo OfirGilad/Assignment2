@@ -20,7 +20,7 @@ public class Ewoks {
 
     }
 
-    public static Ewoks getInstance() {
+    public synchronized static Ewoks getInstance() {
         if (ewoksInstance == null)
             ewoksInstance = new Ewoks();
         return ewoksInstance;

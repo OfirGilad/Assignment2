@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.passiveObjects.Ewoks;
+
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,7 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-
+	private static MessageBusImpl messageBusImplInstance = null;
 	private ConcurrentHashMap<MicroService, MicSerQueue> servises;
 	private ConcurrentHashMap<Class <? extends Event>,BlockingQueue<MicroService>> round_robin;
 	private ConcurrentHashMap<Event, Future> future;
@@ -80,9 +82,11 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	//TODO: Implement class to be Singleton
-	//Code Not final
-	public static MessageBusImpl getInstance() {
-		return new MessageBusImpl();
+	public synchronized static MessageBusImpl getInstance() {
+		if (messageBusImplInstance == null) {
+			messageBusImplInstance = new MessageBusImpl();
+		}
+		return messageBusImplInstance;
 	}
 
 }
