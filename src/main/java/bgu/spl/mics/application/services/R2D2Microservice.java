@@ -28,7 +28,7 @@ public class R2D2Microservice extends MicroService {
     @Override
     protected void initialize() {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
-            if (!broadcastCallBack.getMissionProgress()) {
+            if (broadcastCallBack.getMissionProgress()) {
                 diary.setR2D2Terminate(System.currentTimeMillis());
                 terminate();
             }

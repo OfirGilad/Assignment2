@@ -37,7 +37,7 @@ public class LeiaMicroservice extends MicroService {
     @Override
     protected void initialize() {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
-            if (!broadcastCallBack.getMissionProgress()) {
+            if (broadcastCallBack.getMissionProgress()) {
                 diary.setLeiaTerminate(System.currentTimeMillis());
                 terminate();
             }

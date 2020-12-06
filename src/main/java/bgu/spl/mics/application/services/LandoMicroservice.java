@@ -28,7 +28,7 @@ public class LandoMicroservice  extends MicroService {
     @Override
     protected void initialize() {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
-            if (!broadcastCallBack.getMissionProgress()) {
+            if (broadcastCallBack.getMissionProgress()) {
                 diary.setLandoTerminate(System.currentTimeMillis());
                 terminate();
             }

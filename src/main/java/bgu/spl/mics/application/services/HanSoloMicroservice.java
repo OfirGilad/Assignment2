@@ -28,7 +28,7 @@ public class HanSoloMicroservice extends MicroService {
     @Override
     protected void initialize() {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
-           if (!broadcastCallBack.getMissionProgress()) {
+           if (broadcastCallBack.getMissionProgress()) {
                diary.setHanSoloTerminate(System.currentTimeMillis());
                terminate();
            }
