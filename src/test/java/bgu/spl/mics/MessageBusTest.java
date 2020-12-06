@@ -87,10 +87,9 @@ public class MessageBusTest {
         messageSenderService = new ExampleMessageSenderService("messageSenderService", new String[]{"event"});
         event = new ExampleEvent(messageSenderService.getName());
         messageBus.register(eventHandlerService);
-        eventHandlerService.subscribeEvent(event.getClass(), eventHandle -> {
-            messageBus.complete(eventHandle, "completed");
-        });
+        eventHandlerService.subscribeEvent(event.getClass(), eventHandle -> { });
         future = messageBus.sendEvent(event);
+        messageBus.complete(event, "completed");
         assertEquals(future.get(), "completed");
     }
 
@@ -147,7 +146,7 @@ public class MessageBusTest {
         messageSenderService = new ExampleMessageSenderService("messageSenderService", new String[]{"event"});
         event = new ExampleEvent(messageSenderService.getName());
         messageBus.register(eventHandlerService);
-        messageBus.subscribeEvent(event.getClass(), eventHandlerService);
+        eventHandlerService.subscribeEvent(event.getClass(), eventHandle -> { });
         future = messageBus.sendEvent(event);
         assertNotNull(future);
         messageBus.unregister(eventHandlerService);
@@ -167,7 +166,7 @@ public class MessageBusTest {
         messageSenderService = new ExampleMessageSenderService("messageSenderService", new String[]{"event"});
         event = new ExampleEvent(messageSenderService.getName());
         messageBus.register(eventHandlerService);
-        messageBus.subscribeEvent(event.getClass(), eventHandlerService);
+        eventHandlerService.subscribeEvent(event.getClass(), eventHandle -> { });
         future = messageBus.sendEvent(event);
         assertNotNull(future);
         messageBus.unregister(eventHandlerService);
@@ -194,7 +193,7 @@ public class MessageBusTest {
         messageSenderService = new ExampleMessageSenderService("messageSenderService", new String[]{"event"});
         event = new ExampleEvent(messageSenderService.getName());
         messageBus.register(eventHandlerService);
-        messageBus.subscribeEvent(event.getClass(), eventHandlerService);
+        eventHandlerService.subscribeEvent(event.getClass(), eventHandle -> { });
         messageBus.sendEvent(event);
         Message message = null;
         try {
