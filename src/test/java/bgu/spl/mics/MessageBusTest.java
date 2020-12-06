@@ -40,7 +40,7 @@ public class MessageBusTest {
         event = new ExampleEvent(messageSenderService.getName());
         messageBus.register(eventHandlerService);
         assertNull(messageBus.sendEvent(event));
-        messageBus.subscribeEvent(event.getClass(), eventHandlerService);
+        eventHandlerService.subscribeEvent(event.getClass(), eventHandle -> { });
         assertNotNull(messageBus.sendEvent(event));
         Message message = null;
         try {
@@ -59,8 +59,8 @@ public class MessageBusTest {
         broadcast = new ExampleBroadcast(messageSenderService.getName());
         messageBus.register(firstBroadcastListenerService);
         messageBus.register(secondBroadcastListenerService);
-        messageBus.subscribeBroadcast(broadcast.getClass(), firstBroadcastListenerService);
-        messageBus.subscribeBroadcast(broadcast.getClass(), secondBroadcastListenerService);
+        firstBroadcastListenerService.subscribeBroadcast(broadcast.getClass(), firstBroadcast -> { });
+        secondBroadcastListenerService.subscribeBroadcast(broadcast.getClass(), secondBroadcast -> { });
         messageBus.sendBroadcast(broadcast);
         Message message1 = null;
         Message message2 = null;
@@ -87,9 +87,10 @@ public class MessageBusTest {
         messageSenderService = new ExampleMessageSenderService("messageSenderService", new String[]{"event"});
         event = new ExampleEvent(messageSenderService.getName());
         messageBus.register(eventHandlerService);
-        messageBus.subscribeEvent(event.getClass(), eventHandlerService);
+        eventHandlerService.subscribeEvent(event.getClass(), eventHandle -> {
+            messageBus.complete(eventHandle, "completed");
+        });
         future = messageBus.sendEvent(event);
-        messageBus.complete(event, "completed");
         assertEquals(future.get(), "completed");
     }
 
@@ -99,8 +100,8 @@ public class MessageBusTest {
         broadcast = new ExampleBroadcast(messageSenderService.getName());
         messageBus.register(firstBroadcastListenerService);
         messageBus.register(secondBroadcastListenerService);
-        messageBus.subscribeBroadcast(broadcast.getClass(), firstBroadcastListenerService);
-        messageBus.subscribeBroadcast(broadcast.getClass(), secondBroadcastListenerService);
+        firstBroadcastListenerService.subscribeBroadcast(broadcast.getClass(), firstBroadcast -> { });
+        secondBroadcastListenerService.subscribeBroadcast(broadcast.getClass(), secondBroadcast -> { });
         messageBus.sendBroadcast(broadcast);
         Message message1 = null;
         Message message2 = null;
@@ -128,7 +129,7 @@ public class MessageBusTest {
         event = new ExampleEvent(messageSenderService.getName());
         messageBus.register(eventHandlerService);
         assertNull(messageBus.sendEvent(event));
-        messageBus.subscribeEvent(event.getClass(), eventHandlerService);
+        eventHandlerService.subscribeEvent(event.getClass(), eventHandle -> { });
         assertNotNull(messageBus.sendEvent(event));
         Message message = null;
         try {
