@@ -16,13 +16,11 @@ import java.util.concurrent.CountDownLatch;
  */
 public class C3POMicroservice extends MicroService {
     private final Ewoks ewoks;
-    private final CountDownLatch waitForAllToSubEvents;
     private final Diary diary;
 
-    public C3POMicroservice(CountDownLatch waitForAllToSubEvents) {
+    public C3POMicroservice() {
         super("C3PO");
         ewoks = Ewoks.getInstance();
-        this.waitForAllToSubEvents = waitForAllToSubEvents;
         diary = Diary.getInstance();
     }
 
@@ -52,6 +50,6 @@ public class C3POMicroservice extends MicroService {
                 complete(eventCallBack, false);
             }
         });
-        waitForAllToSubEvents.countDown();
+        LeiaMicroservice.countDownByOne();
     }
 }

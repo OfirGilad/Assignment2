@@ -15,13 +15,11 @@ import java.util.concurrent.CountDownLatch;
  */
 public class HanSoloMicroservice extends MicroService {
     private final Ewoks ewoks;
-    private final CountDownLatch waitForAllToSubEvents;
     private final Diary diary;
 
-    public HanSoloMicroservice(CountDownLatch waitForAllToSubEvents) {
+    public HanSoloMicroservice() {
         super("Han");
         ewoks = Ewoks.getInstance();
-        this.waitForAllToSubEvents = waitForAllToSubEvents;
         diary = Diary.getInstance();
     }
 
@@ -51,6 +49,6 @@ public class HanSoloMicroservice extends MicroService {
                 complete(eventCallBack, false);
             }
         });
-        waitForAllToSubEvents.countDown();
+        LeiaMicroservice.countDownByOne();
     }
 }

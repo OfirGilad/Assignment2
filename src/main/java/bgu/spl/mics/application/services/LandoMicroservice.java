@@ -13,14 +13,12 @@ import java.util.concurrent.CountDownLatch;
  */
 public class LandoMicroservice  extends MicroService {
     private final long duration;
-    private final CountDownLatch waitForAllToSubEvents;
     private final Diary diary;
     private Boolean deactivationEventResult;
 
-    public LandoMicroservice(long duration, CountDownLatch waitForAllToSubEvents) {
+    public LandoMicroservice(long duration) {
         super("Lando");
         this.duration = duration;
-        this.waitForAllToSubEvents = waitForAllToSubEvents;
         diary = Diary.getInstance();
         deactivationEventResult = false;
     }
@@ -49,6 +47,6 @@ public class LandoMicroservice  extends MicroService {
             }
 
         });
-        waitForAllToSubEvents.countDown();
+        LeiaMicroservice.countDownByOne();
     }
 }

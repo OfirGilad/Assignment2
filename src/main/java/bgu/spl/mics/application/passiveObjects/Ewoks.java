@@ -13,8 +13,6 @@ import java.util.List;
 public class Ewoks {
     private static Ewoks ewoksInstance = null;
     private Ewok[] ewoks;
-    //public static final Object acquireKey = new Object();
-    //public static final Object releaseKey = new Object();
 
     private Ewoks() {
 

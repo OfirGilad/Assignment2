@@ -15,13 +15,11 @@ import java.util.concurrent.CountDownLatch;
  */
 public class R2D2Microservice extends MicroService {
     private final long duration;
-    private final CountDownLatch waitForAllToSubEvents;
     private final Diary diary;
 
-    public R2D2Microservice(long duration, CountDownLatch waitForAllToSubEvents) {
+    public R2D2Microservice(long duration) {
         super("R2D2");
         this.duration = duration;
-        this.waitForAllToSubEvents = waitForAllToSubEvents;
         diary = Diary.getInstance();
     }
 
@@ -43,6 +41,6 @@ public class R2D2Microservice extends MicroService {
                 complete(eventCallBack, false);
             }
         });
-        waitForAllToSubEvents.countDown();
+        LeiaMicroservice.countDownByOne();
     }
 }

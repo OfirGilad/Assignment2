@@ -17,19 +17,17 @@ import java.util.concurrent.CountDownLatch;
 public class Main {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Input input = JsonInputReader.getInputFromJson("input.json");
-		//System.out.println(input.getEwoks());
 
 		//Importing data from json input
 		Ewoks ewoks = Ewoks.getInstance();
 		ewoks.allocateEwoks(input.getEwoks());
 
 		//Microservices construction
-		CountDownLatch waitForAllToSubEvents = new CountDownLatch(4);
 		LeiaMicroservice Leia = new LeiaMicroservice(input.getAttacks());
-		HanSoloMicroservice HanSolo = new HanSoloMicroservice(waitForAllToSubEvents);
-		C3POMicroservice C3PO = new C3POMicroservice(waitForAllToSubEvents);
-		R2D2Microservice R2D2 = new R2D2Microservice(input.getR2D2(), waitForAllToSubEvents);
-		LandoMicroservice Lando = new LandoMicroservice(input.getLando(), waitForAllToSubEvents);
+		HanSoloMicroservice HanSolo = new HanSoloMicroservice();
+		C3POMicroservice C3PO = new C3POMicroservice();
+		R2D2Microservice R2D2 = new R2D2Microservice(input.getR2D2());
+		LandoMicroservice Lando = new LandoMicroservice(input.getLando());
 
 		//Threads declaration
 		Thread LeiaThread = new Thread(Leia);
@@ -39,12 +37,11 @@ public class Main {
 		Thread LandoThread = new Thread(Lando);
 
 		//Threads activation
+		LeiaThread.start();
 		HanSoloThread.start();
 		C3POThread.start();
 		R2D2Thread.start();
 		LandoThread.start();
-		waitForAllToSubEvents.await();
-		LeiaThread.start();
 
 		HanSoloThread.join();
 		C3POThread.join();
