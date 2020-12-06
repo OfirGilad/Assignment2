@@ -15,6 +15,8 @@ import java.util.concurrent.CountDownLatch;
  * In the end, you should output a JSON.
  */
 public class Main {
+	public static final CountDownLatch waitForAllToSubEvents = new CountDownLatch(4);
+
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Input input = JsonInputReader.getInputFromJson("input.json");
 
@@ -37,18 +39,18 @@ public class Main {
 		Thread LandoThread = new Thread(Lando);
 
 		//Threads activation
-		LeiaThread.start();
 		HanSoloThread.start();
 		C3POThread.start();
 		R2D2Thread.start();
 		LandoThread.start();
+		waitForAllToSubEvents.await();
+		LeiaThread.start();
 
 		HanSoloThread.join();
 		C3POThread.join();
 		R2D2Thread.join();
 		LandoThread.join();
 		LeiaThread.join();
-
 
 
 	}

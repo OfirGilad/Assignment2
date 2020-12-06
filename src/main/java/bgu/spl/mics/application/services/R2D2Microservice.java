@@ -1,4 +1,5 @@
 package bgu.spl.mics.application.services;
+import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.Diary;
@@ -41,6 +42,6 @@ public class R2D2Microservice extends MicroService {
                 complete(eventCallBack, false);
             }
         });
-        LeiaMicroservice.countDownByOne();
+        Main.waitForAllToSubEvents.countDown();
     }
 }

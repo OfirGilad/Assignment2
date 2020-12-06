@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Diary;
 
@@ -47,6 +48,6 @@ public class LandoMicroservice  extends MicroService {
             }
 
         });
-        LeiaMicroservice.countDownByOne();
+        Main.waitForAllToSubEvents.countDown();
     }
 }

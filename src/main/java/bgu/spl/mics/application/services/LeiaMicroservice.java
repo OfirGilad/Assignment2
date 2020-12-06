@@ -23,7 +23,6 @@ public class LeiaMicroservice extends MicroService {
 	private final Diary diary;
 	private Boolean bombDestroyerEventResult;
     private boolean isReady;
-	private static final CountDownLatch waitForAllToSubEvents = new CountDownLatch(4);
 
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
@@ -46,15 +45,6 @@ public class LeiaMicroservice extends MicroService {
                 terminate();
             }
         });
-
-        //Waiting for all to finish subscribing their events and broadcasts
-        while (!isReady) {
-            try {
-                waitForAllToSubEvents.await();
-                isReady = true;
-            } catch (InterruptedException ignored) { }
-        }
-
         //Attack Phase
         for (int i = 0; i < attacks.length; i++) {
             futureAttacks[i] = sendEvent(attackEvents[i]);
@@ -75,9 +65,5 @@ public class LeiaMicroservice extends MicroService {
             Future<Boolean> eventResult = sendEvent(bombDestroyerEvent);
             bombDestroyerEventResult = eventResult.get();
         }
-    }
-
-    public static void countDownByOne() {
-        waitForAllToSubEvents.countDown();
     }
 }
