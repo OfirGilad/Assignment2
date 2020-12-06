@@ -15,17 +15,20 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap<MicroService, MicSerQueue> servises;
 	private ConcurrentHashMap<Class <? extends Event>,BlockingQueue<MicroService>> round_robin;
 	private ConcurrentHashMap<Event, Future> future;
+	private ConcurrentHashMap<Class <? extends Broadcast>, BlockingQueue<MicroService>> broadcast_services;// hash map of queue of microservices for each broadcast
 
 	public MessageBusImpl()
 	{
 		servises = new ConcurrentHashMap<>();
 		round_robin = new ConcurrentHashMap<>();
 		future = new ConcurrentHashMap<>();
+		broadcast_services = new ConcurrentHashMap<>();
 	}
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		//TODO:check if micrcoservice in registered
+		round_robin.putIfAbsent(type, new LinkedBlockingQueue<>());
 		round_robin.get(type).add(m);
 		servises.get(m).subscribed_event.offer(type);
 	}
@@ -33,6 +36,9 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
 		//TODO:check if micrcoservice in registered
+		broadcast_services.putIfAbsent(type, new LinkedBlockingQueue<>());
+		if (!broadcast_services.get(type).contains(m))
+			broadcast_services.get(type).add(m);
 		servises.get(m).subscribed_broadcast.offer(type);
     }
 
@@ -46,7 +52,8 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		
+		for(MicroService m : this.broadcast_services.get(b))
+			this.servises.get(m).messageQ.add(b);// maybe offer inted of add (need to check)
 	}
 
 	
@@ -80,14 +87,14 @@ public class MessageBusImpl implements MessageBus {
 
 }
 class MicSerQueue{
-	public BlockingQueue<Event> eventQ;
+	public BlockingQueue<Message> messageQ;
 	public BlockingQueue<Class <? extends Event>> subscribed_event;
 	public BlockingQueue<Class <? extends Broadcast>> subscribed_broadcast;
 
 
 	public MicSerQueue()
 	{
-		this.eventQ= new LinkedBlockingQueue<Event>();
+		this.messageQ= new LinkedBlockingQueue<Message>();
 		this.subscribed_event = new LinkedBlockingQueue<Class <? extends Event>>();
 		this.subscribed_broadcast = new LinkedBlockingQueue<Class <? extends Broadcast>>();
 	}
