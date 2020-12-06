@@ -51,6 +51,7 @@ public class MessageBusTest {
         }
         assertNotNull(message);
         assertEquals(message, event);
+        messageBus.unregister(eventHandlerService);
     }
 
     @Test
@@ -80,6 +81,8 @@ public class MessageBusTest {
         assertEquals(message1, broadcast);
         assertNotNull(message2);
         assertEquals(message2, broadcast);
+        messageBus.unregister(firstBroadcastListenerService);
+        messageBus.unregister(secondBroadcastListenerService);
     }
 
     @Test
@@ -91,6 +94,7 @@ public class MessageBusTest {
         future = messageBus.sendEvent(event);
         messageBus.complete(event, "completed");
         assertEquals(future.get(), "completed");
+        messageBus.unregister(eventHandlerService);
     }
 
     @Test
@@ -120,6 +124,8 @@ public class MessageBusTest {
         assertEquals(message1, broadcast);
         assertNotNull(message2);
         assertEquals(message2, broadcast);
+        messageBus.unregister(firstBroadcastListenerService);
+        messageBus.unregister(secondBroadcastListenerService);
     }
 
     @Test
@@ -139,6 +145,7 @@ public class MessageBusTest {
         }
         assertNotNull(message);
         assertEquals(message, event);
+        messageBus.unregister(eventHandlerService);
     }
 
     @Test
@@ -203,5 +210,6 @@ public class MessageBusTest {
         }
         assertNotNull(message);
         assertEquals(message, event);
+        messageBus.register(eventHandlerService);
     }
 }
