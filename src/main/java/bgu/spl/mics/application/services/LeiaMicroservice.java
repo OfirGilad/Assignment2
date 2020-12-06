@@ -4,7 +4,6 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Attack;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import bgu.spl.mics.application.passiveObjects.Diary;
 
@@ -19,7 +18,7 @@ import bgu.spl.mics.application.passiveObjects.Diary;
 public class LeiaMicroservice extends MicroService {
 	private final Attack[] attacks;
 	private final AttackEvent[] attackEvents;
-	private final Future<Boolean>[] futureAttacks;
+	private final Future[] futureAttacks;
 	private final Diary diary;
 	private Boolean bombDestroyerEventResult;
 
@@ -60,11 +59,8 @@ public class LeiaMicroservice extends MicroService {
         //BombDestroyer Phase (Lando sends Deactivation request to R2D2)
         while (!bombDestroyerEventResult) {
             BombDestroyerEvent bombDestroyerEvent = new BombDestroyerEvent(super.getName());
-            Future<Boolean> bombDestroyerFutureResult = sendEvent(bombDestroyerEvent);
-            Object bombDestroyerResult = bombDestroyerFutureResult.get();
-            if (bombDestroyerResult.equals(true)){
-                bombDestroyerEventResult = true;
-            }
+            Future<Boolean> eventResult = sendEvent(bombDestroyerEvent);
+            bombDestroyerEventResult = eventResult.get();
         }
     }
 }
