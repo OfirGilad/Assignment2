@@ -62,21 +62,20 @@ public class MessageBusImpl implements MessageBus {
 	public <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> ret = new Future<>();
 		BlockingQueue<MicroService> round_robin_e = round_robin.get(e.getClass());
-		synchronized (round_robin_e){
-			MicroService m1  = round_robin_e.remove();
-			if(m1!= null)
-			{
-				if (servises.get(m1) !=null)
-				{
-					future.put(e,ret);
-					round_robin_e.add(m1);
-					servises.get(m1).messageQ.offer(e);
-					return ret;
+		if (round_robin_e != null) {
+			synchronized (round_robin_e) {
+				MicroService m1 = round_robin_e.remove();
+				if (m1 != null) {
+					if (servises.get(m1) != null) {
+						future.put(e, ret);
+						round_robin_e.add(m1);
+						servises.get(m1).messageQ.offer(e);
+						return ret;
+					}
 				}
 			}
 		}
-		ret.resolve(null);
-		return  ret;
+		return null;
 	}
 
 	@Override
