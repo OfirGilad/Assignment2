@@ -4,8 +4,6 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.*;
 
-import java.util.concurrent.CountDownLatch;
-
 /**
  * HanSoloMicroservices is in charge of the handling {@link AttackEvent}.
  * This class may not hold references for objects which it is not responsible for:
@@ -27,10 +25,10 @@ public class HanSoloMicroservice extends MicroService {
     @Override
     protected void initialize() {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
-           if (broadcastCallBack.getMissionProgress()) {
-               diary.setHanSoloTerminate(System.currentTimeMillis());
-               terminate();
-           }
+            if (broadcastCallBack.getMissionProgress()) {
+                diary.setHanSoloTerminate(System.currentTimeMillis());
+                terminate();
+            }
         });
         subscribeEvent(AttackEvent.class, eventCallBack -> {
             Attack HanSoloAttack = eventCallBack.getAttack();
@@ -42,11 +40,13 @@ public class HanSoloMicroservice extends MicroService {
                     diary.incrementTotalAttacks();
                     complete(eventCallBack, true);
                 } catch (InterruptedException e) {
+                    System.out.println(getName() + " failed to complete the AttackEvent, aborting mission...");
                     ewoks.releaseEwoks(HanSoloAttack.getSerials());
                     complete(eventCallBack, false);
                 }
             }
             else {
+                System.out.println(getName() + " failed while waiting to acquire ewoks, aborting mission...");
                 complete(eventCallBack, false);
             }
         });

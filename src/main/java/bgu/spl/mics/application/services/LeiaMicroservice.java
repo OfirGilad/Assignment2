@@ -54,6 +54,7 @@ public class LeiaMicroservice extends MicroService {
                 isReady = true;
             }
             catch (InterruptedException e) {
+                System.out.println(getName() + " failed while waiting for other microservices to complete subscriptions, retrying to wait again...");
                 e.printStackTrace();
             }
         }

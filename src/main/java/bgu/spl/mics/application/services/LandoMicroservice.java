@@ -5,8 +5,6 @@ import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Diary;
 
-import java.util.concurrent.CountDownLatch;
-
 /**
  * LandoMicroservice
  * You can add private fields and public methods to this class.
@@ -44,6 +42,7 @@ public class LandoMicroservice  extends MicroService {
                 MissionProgressBroadcast missionCompletedBroadcast = new MissionProgressBroadcast(true);
                 sendBroadcast(missionCompletedBroadcast);
             } catch (InterruptedException e) {
+                System.out.println(getName() + " failed to complete the BombDestroyerEvent, aborting mission...");
                 complete(eventCallBack, false);
             }
 

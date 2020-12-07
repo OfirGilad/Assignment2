@@ -4,8 +4,6 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.Diary;
 
-import java.util.concurrent.CountDownLatch;
-
 /**
  * R2D2Microservices is in charge of the handling {@link DeactivationEvent}.
  * This class may not hold references for objects which it is not responsible for:
@@ -39,6 +37,7 @@ public class R2D2Microservice extends MicroService {
                 complete(eventCallBack, true);
             }
             catch (InterruptedException e) {
+                System.out.println(getName() + " failed to acquire complete the DeactivationEvent, aborting mission...");
                 complete(eventCallBack, false);
             }
         });

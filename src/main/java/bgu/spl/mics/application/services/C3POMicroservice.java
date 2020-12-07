@@ -4,9 +4,6 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.*;
 
-import java.util.concurrent.CountDownLatch;
-
-
 /**
  * C3POMicroservices is in charge of the handling {@link AttackEvent}.
  * This class may not hold references for objects which it is not responsible for:
@@ -43,11 +40,13 @@ public class C3POMicroservice extends MicroService {
                     diary.incrementTotalAttacks();
                     complete(eventCallBack, true);
                 } catch (InterruptedException e) {
+                    System.out.println(getName() + " failed to complete the AttackEvent, aborting mission...");
                     ewoks.releaseEwoks(C3POAttack.getSerials());
                     complete(eventCallBack, false);
                 }
             }
             else {
+                System.out.println(getName() + " failed while waiting to acquire ewoks, aborting mission...");
                 complete(eventCallBack, false);
             }
         });
