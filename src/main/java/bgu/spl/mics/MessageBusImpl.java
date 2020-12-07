@@ -61,8 +61,23 @@ public class MessageBusImpl implements MessageBus {
 	
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
-		
-        return null;
+		Future<T> ret = new Future<>();
+		BlockingQueue<MicroService> round_robin_e = round_robin.get(e);
+		synchronized (round_robin_e){
+			MicroService m1  = round_robin_e.remove();
+			if(m1!= null)
+			{
+				if (servises.get(m1) !=null)
+				{
+					future.put(e,ret);
+					round_robin_e.add(m1);
+					servises.get(m1).messageQ.offer(e);
+					return ret;
+				}
+			}
+		}
+		ret.resolve(null);
+		return  ret;
 	}
 
 	@Override
@@ -77,8 +92,9 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException {
-		
-		return null;
+		if (servises.get(m)==null)
+			throw new IllegalStateException("awaitMessage function failed !! ,service: " + m.getName() + "is not registered");
+		return servises.get(m).messageQ.take();
 	}
 
 	//TODO: Implement class to be Singleton
