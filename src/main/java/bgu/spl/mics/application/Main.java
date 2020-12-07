@@ -39,6 +39,9 @@ public class Main {
 		Thread R2D2Thread = new Thread(R2D2);
 		Thread LandoThread = new Thread(Lando);
 
+		System.out.println("A long time ago in a galaxy far, far away....");
+		System.out.println("An attack on the empire star destroyer ship has started");
+
 		//Threads activation
 		LeiaThread.start();
 		HanSoloThread.start();
@@ -52,6 +55,7 @@ public class Main {
 		LandoThread.join();
 		LeiaThread.join();
 
-		System.out.println("Mission Completed");
+		System.out.println("Mission Complete!~");
+		System.out.println("A time of peace has returned to the galaxy, until the next time another threat will show up...");
 	}
 }

@@ -27,15 +27,21 @@ public class HanSoloMicroservice extends MicroService {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
             if (broadcastCallBack.getMissionProgress()) {
                 diary.setHanSoloTerminate(System.currentTimeMillis());
+                System.out.println(getName() + " has left the channel gracefully");
                 terminate();
             }
         });
         subscribeEvent(AttackEvent.class, eventCallBack -> {
+            System.out.println(getName() + " received an AttackEvent");
             Attack HanSoloAttack = eventCallBack.getAttack();
             if (ewoks.acquireEwoks(HanSoloAttack.getSerials())) {
                 try {
+                    System.out.println(getName() + " started an AttackEvent");
+                    System.out.println("The ewoks have joined the AttackEvent");
                     Thread.sleep(HanSoloAttack.getDuration());
                     diary.setHanSoloFinish(System.currentTimeMillis());
+                    System.out.println(getName() + " completed the AttackEvent");
+                    System.out.println("The ewoks have left the AttackEvent");
                     ewoks.releaseEwoks(HanSoloAttack.getSerials());
                     diary.incrementTotalAttacks();
                     complete(eventCallBack, true);
@@ -50,6 +56,7 @@ public class HanSoloMicroservice extends MicroService {
                 complete(eventCallBack, false);
             }
         });
+        System.out.println(getName() + " has joined the channel");
         Main.waitForAllToSubEvents.countDown();
     }
 }

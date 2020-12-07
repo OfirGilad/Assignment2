@@ -27,13 +27,17 @@ public class R2D2Microservice extends MicroService {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
             if (broadcastCallBack.getMissionProgress()) {
                 diary.setR2D2Terminate(System.currentTimeMillis());
+                System.out.println(getName() + " has left the channel gracefully");
                 terminate();
             }
         });
         subscribeEvent(DeactivationEvent.class, eventCallBack -> {
+            System.out.println(getName() + " received a DeactivationEvent");
             try {
+                System.out.println(getName() + " started a DeactivationEvent");
                 Thread.sleep(duration);
                 diary.setR2D2Deactivate(System.currentTimeMillis());
+                System.out.println(getName() + " completed the DeactivationEvent");
                 complete(eventCallBack, true);
             }
             catch (InterruptedException e) {
@@ -41,6 +45,7 @@ public class R2D2Microservice extends MicroService {
                 complete(eventCallBack, false);
             }
         });
+        System.out.println(getName() + " has joined the channel");
         Main.waitForAllToSubEvents.countDown();
     }
 }

@@ -27,18 +27,24 @@ public class LandoMicroservice  extends MicroService {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
             if (broadcastCallBack.getMissionProgress()) {
                 diary.setLandoTerminate(System.currentTimeMillis());
+                System.out.println(getName() + " has left the channel gracefully");
                 terminate();
             }
         });
         subscribeEvent(BombDestroyerEvent.class, eventCallBack -> {
+            System.out.println("A DeactivationEvent was sent to R2D2");
             while (!deactivationEventResult) {
                 DeactivationEvent deactivationEvent = new DeactivationEvent(super.getName());
                 Future<Boolean> eventResult = sendEvent(deactivationEvent);
                 deactivationEventResult = eventResult.get();
             }
+            System.out.println(getName() + " received the update from R2D2 via future channel that the star destroyer ship shields are down");
             try {
+                System.out.println(getName() + " started a BombDestroyerEvent");
                 Thread.sleep(duration);
+                System.out.println(getName() + " completed the BombDestroyerEvent");
                 complete(eventCallBack, true);
+                System.out.println(getName() + " sent broadcast to all that the mission is completed");
                 MissionProgressBroadcast missionCompletedBroadcast = new MissionProgressBroadcast(true);
                 sendBroadcast(missionCompletedBroadcast);
             } catch (InterruptedException e) {
@@ -47,6 +53,7 @@ public class LandoMicroservice  extends MicroService {
             }
 
         });
+        System.out.println(getName() + " has joined the channel");
         Main.waitForAllToSubEvents.countDown();
     }
 }

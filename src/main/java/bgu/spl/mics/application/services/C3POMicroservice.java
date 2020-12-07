@@ -27,15 +27,21 @@ public class C3POMicroservice extends MicroService {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
             if (broadcastCallBack.getMissionProgress()) {
                 diary.setC3POTerminate(System.currentTimeMillis());
+                System.out.println(getName() + " has left the channel gracefully");
                 terminate();
             }
         });
         subscribeEvent(AttackEvent.class, eventCallBack -> {
+            System.out.println(getName() + " received an AttackEvent");
             Attack C3POAttack = eventCallBack.getAttack();
             if (ewoks.acquireEwoks(C3POAttack.getSerials())) {
                 try {
+                    System.out.println(getName() + " started an AttackEvent");
+                    System.out.println("The ewoks have joined the AttackEvent");
                     Thread.sleep(C3POAttack.getDuration());
                     diary.setC3POFinish(System.currentTimeMillis());
+                    System.out.println(getName() + " completed the AttackEvent");
+                    System.out.println("The ewoks have left the AttackEvent");
                     ewoks.releaseEwoks(C3POAttack.getSerials());
                     diary.incrementTotalAttacks();
                     complete(eventCallBack, true);
@@ -50,6 +56,7 @@ public class C3POMicroservice extends MicroService {
                 complete(eventCallBack, false);
             }
         });
+        System.out.println(getName() + " has joined the channel");
         Main.waitForAllToSubEvents.countDown();
     }
 }

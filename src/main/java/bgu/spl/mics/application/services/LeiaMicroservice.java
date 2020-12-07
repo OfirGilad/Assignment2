@@ -43,6 +43,7 @@ public class LeiaMicroservice extends MicroService {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
             if (broadcastCallBack.getMissionProgress()) {
                 diary.setLeiaTerminate(System.currentTimeMillis());
+                System.out.println(getName() + " has left the channel gracefully");
                 terminate();
             }
         });
@@ -58,6 +59,8 @@ public class LeiaMicroservice extends MicroService {
                 e.printStackTrace();
             }
         }
+        System.out.println(getName() + " has joined the channel");
+        System.out.println(getName() + " started sending AttackEvents to HanSolo and C3PO");
 
         //Attack Phase
         for (int i = 0; i < attacks.length; i++) {
@@ -73,6 +76,9 @@ public class LeiaMicroservice extends MicroService {
                 attacksIndex++;
             }
         }
+
+        System.out.println("The attacks on the star destroyer ship have finished");
+
         //BombDestroyer Phase (Lando sends Deactivation request to R2D2)
         while (!bombDestroyerEventResult) {
             BombDestroyerEvent bombDestroyerEvent = new BombDestroyerEvent(super.getName());
