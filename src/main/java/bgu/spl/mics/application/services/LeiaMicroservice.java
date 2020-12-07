@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.services;
 import bgu.spl.mics.*;
+import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Attack;
 import java.util.ArrayList;
@@ -38,13 +39,25 @@ public class LeiaMicroservice extends MicroService {
     }
 
     @Override
-    protected void initialize() {
+    protected void initialize()  {
         subscribeBroadcast(MissionProgressBroadcast.class, broadcastCallBack -> {
             if (broadcastCallBack.getMissionProgress()) {
                 diary.setLeiaTerminate(System.currentTimeMillis());
                 terminate();
             }
         });
+
+        //Waiting for all the other microservices to complete subscriptions
+        while (!isReady) {
+            try {
+                Main.waitForAllToSubEvents.await();
+                isReady = true;
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         //Attack Phase
         for (int i = 0; i < attacks.length; i++) {
             futureAttacks[i] = sendEvent(attackEvents[i]);

@@ -4,7 +4,7 @@ public class Input {
 	private Attack[] attacks;
 	private int R2D2;
 	private int Lando;
-	private static int Ewoks;
+	private int Ewoks;
 	
 	public int getEwoks() {
 		return Ewoks;

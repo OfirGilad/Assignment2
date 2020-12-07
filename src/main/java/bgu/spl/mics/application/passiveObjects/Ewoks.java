@@ -40,7 +40,7 @@ public class Ewoks {
             //If at least one needed ewok is unavailable, entering waiting room
             //After notification received checking all over again if all the needed ewoks are available
             //InterruptedException causing a mission failure
-            if (!ewoks[ewokSerialNumbers.get(ewokIndex)].isAvailable()) {
+            if (!ewoks[ewokSerialNumbers.get(ewokIndex) - 1].isAvailable()) {
                 try {
                     wait();
                     ewokIndex = 0;
@@ -53,14 +53,14 @@ public class Ewoks {
             }
         }
         for (Integer ewokSerialNumber : ewokSerialNumbers) {
-            ewoks[ewokSerialNumber].acquire();
+            ewoks[ewokSerialNumber - 1].acquire();
         }
         return true;
     }
 
     public synchronized void releaseEwoks(List<Integer> ewokSerialNumbers) {
         for (Integer ewokSerialNumber : ewokSerialNumbers) {
-            ewoks[ewokSerialNumber].release();
+            ewoks[ewokSerialNumber - 1].release();
         }
         notifyAll();
     }

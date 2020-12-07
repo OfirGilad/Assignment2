@@ -19,6 +19,7 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Input input = JsonInputReader.getInputFromJson("input.json");
+		Diary diary = Diary.getInstance();
 
 		//Importing data from json input
 		Ewoks ewoks = Ewoks.getInstance();
@@ -39,12 +40,11 @@ public class Main {
 		Thread LandoThread = new Thread(Lando);
 
 		//Threads activation
+		LeiaThread.start();
 		HanSoloThread.start();
 		C3POThread.start();
 		R2D2Thread.start();
 		LandoThread.start();
-		waitForAllToSubEvents.await();
-		LeiaThread.start();
 
 		HanSoloThread.join();
 		C3POThread.join();
@@ -52,6 +52,6 @@ public class Main {
 		LandoThread.join();
 		LeiaThread.join();
 
-
+		System.out.println("Mission Completed");
 	}
 }

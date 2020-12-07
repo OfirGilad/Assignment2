@@ -54,15 +54,14 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		for(MicroService m : this.broadcast_services.get(b))
+		for(MicroService m : this.broadcast_services.get(b.getClass()))
 			this.servises.get(m).messageQ.add(b);// maybe offer inted of add (need to check)
 	}
 
-	
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> ret = new Future<>();
-		BlockingQueue<MicroService> round_robin_e = round_robin.get(e);
+		BlockingQueue<MicroService> round_robin_e = round_robin.get(e.getClass());
 		synchronized (round_robin_e){
 			MicroService m1  = round_robin_e.remove();
 			if(m1!= null)
