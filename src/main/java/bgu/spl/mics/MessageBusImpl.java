@@ -85,6 +85,18 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void unregister(MicroService m) {
+		for(Class <? extends Event> e : this.servises.get(m).subscribed_event)//remove m from roundrobins
+		{
+			round_robin.get(e).remove(m);
+		}
+		for(Class <? extends Broadcast> b : this.servises.get(m).subscribed_broadcast)//remove m from roundrobins
+		{
+			broadcast_services.get(b).remove(m);
+		}
+
+		for (Message msg : servises.get(m).messageQ)
+			complete((Event)msg,null);
+
 		servises.remove(m);
 	}
 
@@ -112,8 +124,8 @@ class MicSerQueue{
 
 	public MicSerQueue()
 	{
-		this.messageQ= new LinkedBlockingQueue<Message>();
-		this.subscribed_event = new LinkedBlockingQueue<Class <? extends Event>>();
-		this.subscribed_broadcast = new LinkedBlockingQueue<Class <? extends Broadcast>>();
+		this.messageQ= new LinkedBlockingQueue<>();
+		this.subscribed_event = new LinkedBlockingQueue<>();
+		this.subscribed_broadcast = new LinkedBlockingQueue<>();
 	}
 }
