@@ -23,10 +23,8 @@ import java.util.HashMap;
 public abstract class MicroService implements Runnable { 
     private final String microServiceName;
     private final MessageBusImpl messageBus;
-    private HashMap<Class <? extends  Message>, Callback<?>> callbackHashMap;
+    private final HashMap<Class <? extends  Message>, Callback<?>> callbackHashMap;
     private boolean isTerminated = false;
-    //private Future future;
-    //private int duration = 0;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
