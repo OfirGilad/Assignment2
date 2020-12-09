@@ -5,8 +5,11 @@ import bgu.spl.mics.application.passiveObjects.Ewoks;
 import bgu.spl.mics.application.passiveObjects.Input;
 import bgu.spl.mics.application.passiveObjects.JsonInputReader;
 import bgu.spl.mics.application.services.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
@@ -18,7 +21,8 @@ public class Main {
 	public static final CountDownLatch waitForAllToSubEvents = new CountDownLatch(4);
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		Input input = JsonInputReader.getInputFromJson("input.json");
+		String input_path = args[0];//"input.json";//
+		Input input = JsonInputReader.getInputFromJson(input_path);
 		Diary diary = Diary.getInstance();
 
 		//Importing data from json input
@@ -57,5 +61,14 @@ public class Main {
 
 		System.out.println("Mission Complete!~");
 		System.out.println("A time of peace has returned to the galaxy, until the next time another threat will show up...");
+
+
+		String output_path = args[1];
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		FileWriter writer = new FileWriter(output_path);
+		gson.toJson(diary,writer);
+		writer.flush();
+		writer.close();
+
 	}
 }
