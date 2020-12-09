@@ -69,6 +69,5 @@ public class Main {
 		gson.toJson(diary,writer);
 		writer.flush();
 		writer.close();
-
 	}
 }

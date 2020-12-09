@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Do not add to this class nothing but a single constructor, getters and setters.
  */
 public class Diary {
-    private final AtomicInteger totalAttacks;
+    private final AtomicInteger numberOfAttacks;
     private long HanSoloFinish;
     private long C3POFinish;
     private long R2D2Deactivate;
@@ -23,7 +23,7 @@ public class Diary {
     private static Diary diaryInstance = null;
 
     private Diary() {
-        totalAttacks = new AtomicInteger(0);
+        numberOfAttacks = new AtomicInteger(0);
     }
 
     public synchronized static Diary getInstance() {
@@ -33,8 +33,8 @@ public class Diary {
         return diaryInstance;
     }
 
-    public int getTotalAttacks() {
-        return totalAttacks.get();
+    public AtomicInteger getNumberOfAttacks() {
+        return numberOfAttacks;
     }
 
     public long getHanSoloFinish() {
@@ -69,8 +69,12 @@ public class Diary {
         return LandoTerminate;
     }
 
-    public void incrementTotalAttacks() {
-        totalAttacks.getAndIncrement();
+    public void setNumberOfAttacks(int newNumberOfAttacks) {
+        numberOfAttacks.compareAndSet(numberOfAttacks.get(), newNumberOfAttacks);
+    }
+
+    public void resetNumberAttacks() {
+        numberOfAttacks.set(0);
     }
 
     public void setHanSoloFinish(long hanSoloFinish) {

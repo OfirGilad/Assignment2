@@ -43,7 +43,7 @@ public class HanSoloMicroservice extends MicroService {
                     System.out.println(getName() + " completed the AttackEvent");
                     System.out.println("The ewoks have left the AttackEvent");
                     ewoks.releaseEwoks(HanSoloAttack.getSerials());
-                    diary.incrementTotalAttacks();
+                    diary.setNumberOfAttacks(diary.getNumberOfAttacks().get() + 1);
                     complete(eventCallBack, true);
                 } catch (InterruptedException e) {
                     System.out.println(getName() + " failed to complete the AttackEvent, aborting mission...");

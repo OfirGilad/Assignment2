@@ -31,29 +31,28 @@ public class Ewoks {
         }
     }
 
-    public synchronized Boolean acquireEwoks(List<Integer> ewokSerialNumbers) {
+    public Boolean acquireEwoks(List<Integer> ewokSerialNumbers) {
         int ewokIndex = 0;
+        ewokSerialNumbers.sort(Integer::compareTo);
 
         //Checking if all needed ewoks are available
         while (ewokIndex < ewokSerialNumbers.size()) {
 
             //If at least one needed ewok is unavailable, entering waiting room
-            //After notification received checking all over again if all the needed ewoks are available
             //InterruptedException causing a mission failure
-            if (!ewoks[ewokSerialNumbers.get(ewokIndex) - 1].isAvailable()) {
-                try {
-                    wait();
-                    ewokIndex = 0;
-                } catch (InterruptedException e) {
-                    return false;
+            synchronized (this) {
+                if (!ewoks[ewokSerialNumbers.get(ewokIndex) - 1].isAvailable()) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        releaseEwoks(ewokSerialNumbers);
+                        return false;
+                    }
+                } else {
+                    ewoks[ewokSerialNumbers.get(ewokIndex) - 1].acquire();
+                    ewokIndex++;
                 }
             }
-            else {
-                ewokIndex++;
-            }
-        }
-        for (Integer ewokSerialNumber : ewokSerialNumbers) {
-            ewoks[ewokSerialNumber - 1].acquire();
         }
         return true;
     }
