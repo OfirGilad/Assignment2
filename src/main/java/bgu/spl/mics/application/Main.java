@@ -18,11 +18,12 @@ import java.util.concurrent.CountDownLatch;
  * In the end, you should output a JSON.
  */
 public class Main {
-	public static final CountDownLatch waitForAllToSubEvents = new CountDownLatch(4);
+	public static CountDownLatch waitForAllToSubEvents = new CountDownLatch(4);
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		String input_path = args[0];//"input.json";//
-		Input input = JsonInputReader.getInputFromJson(input_path);
+		//String input_path = args[0];//"input.json";//
+		//Input input = JsonInputReader.getInputFromJson("Tests.json");
+		Input input = JsonInputReader.getInputFromJson("input.json");
 		Diary diary = Diary.getInstance();
 
 		//Importing data from json input
@@ -63,11 +64,14 @@ public class Main {
 		System.out.println("A time of peace has returned to the galaxy, until the next time another threat will show up...");
 
 
-		String output_path = args[1];
+		//String output_path = args[1];
+		String output_path = "Output.json";
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		FileWriter writer = new FileWriter(output_path);
 		gson.toJson(diary,writer);
 		writer.flush();
 		writer.close();
+
+		waitForAllToSubEvents = new CountDownLatch(4);
 	}
 }
