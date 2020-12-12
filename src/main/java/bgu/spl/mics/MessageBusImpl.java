@@ -16,7 +16,7 @@ public class MessageBusImpl implements MessageBus {
 	private final ConcurrentHashMap<Event, Future> future;
 	private final ConcurrentHashMap<Class <? extends Broadcast>, BlockingQueue<MicroService>> broadcast_services;// hash map of queue of microservices for each broadcast
 
-	public MessageBusImpl()
+	private MessageBusImpl()
 	{
 		services = new ConcurrentHashMap<>();
 		round_robin = new ConcurrentHashMap<>();
