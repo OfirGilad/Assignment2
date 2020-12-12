@@ -26,7 +26,7 @@ public class Ewoks {
 
     public synchronized void allocateEwoks (int numberOfEwoks) {
         ewoks = new Ewok[numberOfEwoks];
-        for (int i=0; i< numberOfEwoks; i++) {
+        for (int i = 0; i < numberOfEwoks; i++) {
             ewoks[i] = new Ewok(i + 1);
         }
     }
@@ -57,11 +57,12 @@ public class Ewoks {
         return true;
     }
 
-    public synchronized void releaseEwoks(List<Integer> ewokSerialNumbers) {
+    public void releaseEwoks(List<Integer> ewokSerialNumbers) {
         for (Integer ewokSerialNumber : ewokSerialNumbers) {
-            ewoks[ewokSerialNumber - 1].release();
+            synchronized(this) {
+                ewoks[ewokSerialNumber - 1].release();
+                notifyAll();
+            }
         }
-        notifyAll();
     }
-
 }
