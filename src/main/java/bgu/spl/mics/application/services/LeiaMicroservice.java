@@ -3,9 +3,10 @@ import bgu.spl.mics.*;
 import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Attack;
+
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import bgu.spl.mics.application.passiveObjects.Diary;
 
@@ -20,7 +21,7 @@ import bgu.spl.mics.application.passiveObjects.Diary;
 public class LeiaMicroservice extends MicroService {
 	private final Attack[] attacks;
 	private final AttackEvent[] attackEvents;
-	private final Future[] futureAttacks;
+	private final HashMap<Integer,Future<Boolean>> futureAttacksMap;
 	private final Diary diary;
 	private Boolean bombDestroyerEventResult;
     private boolean isReady;
@@ -29,9 +30,10 @@ public class LeiaMicroservice extends MicroService {
         super("Leia");
 		this.attacks = attacks;
 		this.attackEvents = new AttackEvent[attacks.length];
-		this.futureAttacks = new Future[attacks.length];
+		//this.futureAttacks = new Future[attacks.length];
         diary = Diary.getInstance();
         bombDestroyerEventResult = false;
+        futureAttacksMap = new HashMap<>();
         isReady = false;
         for (int i = 0; i < attacks.length; i ++) {
             attackEvents[i] = new AttackEvent(super.getName(), attacks[i]);
@@ -64,19 +66,23 @@ public class LeiaMicroservice extends MicroService {
 
         //Attack Phase
         for (int i = 0; i < attacks.length; i++) {
-            futureAttacks[i] = sendEvent(attackEvents[i]);
+            futureAttacksMap.put(i, sendEvent(attackEvents[i]));
         }
-        int attacksIndex = 0;
-        while (attacksIndex < attacks.length) {
-            Object attackResult = futureAttacks[attacksIndex].get();
-            if (attackResult.equals(false)){
-                attackEvents[attacksIndex] = new AttackEvent(super.getName(), attacks[attacksIndex]);
+        while (!futureAttacksMap.isEmpty()) {
+            for (int i = 0; i < attackEvents.length && !futureAttacksMap.isEmpty(); i++) {
+                if (futureAttacksMap.get(i) != null && futureAttacksMap.get(i).isDone()) {
+                    Object attackResult = futureAttacksMap.get(i).get();
+                    if (attackResult.equals(false)) {
+                        AttackEvent attackEvent = new AttackEvent(super.getName(), attacks[i]);
+                        futureAttacksMap.replace(i, futureAttacksMap.get(i), sendEvent(attackEvent));
+                    }
+                    else {
+                        futureAttacksMap.remove(i);
+                    }
+                }
             }
-            else {
-                attacksIndex++;
-            }
-        }
 
+        }
         System.out.println("The attacks on the star destroyer ship have finished");
 
         //BombDestroyer Phase (Lando sends Deactivation request to R2D2)

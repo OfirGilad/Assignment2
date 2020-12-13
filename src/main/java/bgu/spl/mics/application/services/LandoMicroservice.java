@@ -51,7 +51,6 @@ public class LandoMicroservice  extends MicroService {
                 System.out.println(getName() + " failed to complete the BombDestroyerEvent, aborting mission...");
                 complete(eventCallBack, false);
             }
-
         });
         System.out.println(getName() + " has joined the channel");
         Main.waitForAllToSubEvents.countDown();

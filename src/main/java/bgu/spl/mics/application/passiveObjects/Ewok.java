@@ -18,22 +18,40 @@ public class Ewok {
     /**
      * Acquires an Ewok
      */
-    public void acquire() {
+    public synchronized void acquire() {
         available = false;
+    }
+
+    //If ewok is occupied, waiting till it released
+    //If the thread gets interruption during the wait - aborting the mission
+    public synchronized void tryAcquire() throws InterruptedException {
+        if (available) {
+            available = false;
+        }
+        else {
+            try {
+                wait();
+                available = false;
+            }
+            catch (InterruptedException e) {
+                throw new InterruptedException();
+            }
+        }
     }
 
     /**
      * release an Ewok
      */
-    public void release() {
+    public synchronized void release() {
     	available = true;
+    	notifyAll();
     }
 
     public int getSerialNumber() {
         return serialNumber;
     }
 
-    public boolean isAvailable() {
+    public synchronized boolean isAvailable() {
         return available;
     }
 }
