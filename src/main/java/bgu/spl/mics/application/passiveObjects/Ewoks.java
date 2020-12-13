@@ -11,17 +11,18 @@ import java.util.List;
  * You can add ONLY private methods and fields to this class.
  */
 public class Ewoks {
-    private static Ewoks ewoksInstance = null;
     private Ewok[] ewoks;
+
+    private static class SingletonHolder {
+        private static final Ewoks instance = new Ewoks();
+    }
 
     private Ewoks() {
 
     }
 
-    public synchronized static Ewoks getInstance() {
-        if (ewoksInstance == null)
-            ewoksInstance = new Ewoks();
-        return ewoksInstance;
+    public static Ewoks getInstance() {
+        return SingletonHolder.instance;
     }
 
     public synchronized void allocateEwoks (int numberOfEwoks) {
@@ -33,7 +34,6 @@ public class Ewoks {
 
     public Boolean acquireEwoks(List<Integer> ewokSerialNumbers) {
         int ewokIndex = 0;
-        ewokSerialNumbers.sort(Integer::compareTo);
 
         //Checking if all needed ewoks are available
         while (ewokIndex < ewokSerialNumbers.size()) {

@@ -34,17 +34,16 @@ public class HanSoloMicroservice extends MicroService {
         subscribeEvent(AttackEvent.class, eventCallBack -> {
             System.out.println(getName() + " received an AttackEvent");
             Attack HanSoloAttack = eventCallBack.getAttack();
+            HanSoloAttack.getSerials().sort(Integer::compareTo);
             if (ewoks.acquireEwoks(HanSoloAttack.getSerials())) {
                 try {
-                    System.out.println(getName() + " started an AttackEvent");
-                    System.out.println("The ewoks have joined the AttackEvent");
+                    System.out.println(getName() + " started an AttackEvent");;
                     Thread.sleep(HanSoloAttack.getDuration());
                     diary.setHanSoloFinish(System.currentTimeMillis());
                     System.out.println(getName() + " completed the AttackEvent");
-                    System.out.println("The ewoks have left the AttackEvent");
-                    ewoks.releaseEwoks(HanSoloAttack.getSerials());
                     diary.setNumberOfAttacks(diary.getNumberOfAttacks().get() + 1);
                     complete(eventCallBack, true);
+                    ewoks.releaseEwoks(HanSoloAttack.getSerials());
                 } catch (InterruptedException e) {
                     System.out.println(getName() + " failed to complete the AttackEvent, aborting mission...");
                     ewoks.releaseEwoks(HanSoloAttack.getSerials());

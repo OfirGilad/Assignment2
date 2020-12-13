@@ -32,7 +32,10 @@ public class LandoMicroservice  extends MicroService {
             }
         });
         subscribeEvent(BombDestroyerEvent.class, eventCallBack -> {
-            System.out.println("A DeactivationEvent was sent to R2D2");
+            System.out.println(getName() + " received a BombDestroyerEvent");
+            deactivationEventResult = eventCallBack.getDeactivationResult().get();
+
+            //In case DeactivationEvent failed Lando resend it
             while (!deactivationEventResult) {
                 DeactivationEvent deactivationEvent = new DeactivationEvent(super.getName());
                 Future<Boolean> eventResult = sendEvent(deactivationEvent);

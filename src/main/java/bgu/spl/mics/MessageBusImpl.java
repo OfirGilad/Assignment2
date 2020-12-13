@@ -10,11 +10,14 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	private static MessageBusImpl messageBusImplInstance = null;
 	private final ConcurrentHashMap<MicroService, MicSerQueue> services;
 	private final ConcurrentHashMap<Class <? extends Event>,BlockingQueue<MicroService>> round_robin;
 	private final ConcurrentHashMap<Event, Future> future;
 	private final ConcurrentHashMap<Class <? extends Broadcast>, BlockingQueue<MicroService>> broadcast_services;// hash map of queue of microservices for each broadcast
+
+	private static class SingletonHolder {
+		private static final MessageBusImpl instance = new MessageBusImpl();
+	}
 
 	private MessageBusImpl()
 	{
@@ -22,6 +25,10 @@ public class MessageBusImpl implements MessageBus {
 		round_robin = new ConcurrentHashMap<>();
 		future = new ConcurrentHashMap<>();
 		broadcast_services = new ConcurrentHashMap<>();
+	}
+
+	public static MessageBusImpl getInstance() {
+		return SingletonHolder.instance;
 	}
 
 	@Override
@@ -110,15 +117,6 @@ public class MessageBusImpl implements MessageBus {
 			throw new IllegalStateException("awaitMessage function failed !! ,service: " + m.getName() + "is not registered");
 		return services.get(m).messageQ.take();
 	}
-
-	//TODO: Implement class to be Singleton
-	public synchronized static MessageBusImpl getInstance() {
-		if (messageBusImplInstance == null) {
-			messageBusImplInstance = new MessageBusImpl();
-		}
-		return messageBusImplInstance;
-	}
-
 }
 class MicSerQueue{
 	public BlockingQueue<Message> messageQ;

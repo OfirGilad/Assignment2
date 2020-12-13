@@ -4,7 +4,7 @@ import bgu.spl.mics.Event;
 
 public class DeactivationEvent implements Event<Boolean> {
     private final String senderName;
-    Boolean result;
+    private Boolean result;
 
     public DeactivationEvent(String senderName) {
         this.senderName = senderName;

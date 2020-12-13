@@ -20,17 +20,16 @@ public class Diary {
     private long R2D2Terminate;
     private long LandoTerminate;
 
-    private static Diary diaryInstance = null;
+    private static class SingletonHolder {
+        private static final Diary instance = new Diary();
+    }
 
     private Diary() {
         numberOfAttacks = new AtomicInteger(0);
     }
 
-    public synchronized static Diary getInstance() {
-        if (diaryInstance == null) {
-            diaryInstance = new Diary();
-        }
-        return diaryInstance;
+    public static Diary getInstance() {
+        return SingletonHolder.instance;
     }
 
     public AtomicInteger getNumberOfAttacks() {

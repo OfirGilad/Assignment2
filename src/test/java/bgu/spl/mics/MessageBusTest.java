@@ -24,6 +24,10 @@ public class MessageBusTest {
     private ExampleEvent event;
     private Future<String> future;
 
+    /**
+     * BeforeEach Update: Updating messageBus variable to get MessageBusImpl instance
+     */
+
     @BeforeEach
     public void setUp(){
         messageBus = MessageBusImpl.getInstance();
@@ -32,6 +36,10 @@ public class MessageBusTest {
         eventHandlerService = new ExampleEventHandlerService("eventHandlerService", new String[]{"1"});
         future = new Future<>();
     }
+
+    /**
+     * Test Update: Microservice (e.g. eventHandlerService) do subscribeEvent, instead messageBus
+     */
 
     @Test
     public void testSubscribeEvent()
@@ -53,6 +61,10 @@ public class MessageBusTest {
         assertEquals(message, event);
         messageBus.unregister(eventHandlerService);
     }
+
+    /**
+     * Test Update: Microservice (e.g. firstBroadcastListenerService) do subscribeBroadcast, instead messageBus
+     */
 
     @Test
     public void testSubscribeBroadcast() {
@@ -85,6 +97,10 @@ public class MessageBusTest {
         messageBus.unregister(secondBroadcastListenerService);
     }
 
+    /**
+     * Test Update: Microservice (e.g. eventHandlerService) do subscribeEvent, instead messageBus
+     */
+
     @Test
     public void testComplete() {
         messageSenderService = new ExampleMessageSenderService("messageSenderService", new String[]{"event"});
@@ -96,6 +112,10 @@ public class MessageBusTest {
         assertEquals(future.get(), "completed");
         messageBus.unregister(eventHandlerService);
     }
+
+    /**
+     * Test Update: Microservice (e.g. firstBroadcastListenerService) do subscribeBroadcast, instead messageBus
+     */
 
     @Test
     public void testSendBroadcast() {
@@ -128,6 +148,10 @@ public class MessageBusTest {
         messageBus.unregister(secondBroadcastListenerService);
     }
 
+    /**
+     * Test Update: Microservice (e.g. eventHandlerService) do subscribeEvent, instead messageBus
+     */
+
     @Test
     public void testSendEvent() {
         messageSenderService = new ExampleMessageSenderService("messageSenderService", new String[]{"event"});
@@ -147,6 +171,10 @@ public class MessageBusTest {
         assertEquals(message, event);
         messageBus.unregister(eventHandlerService);
     }
+
+    /**
+     * Test Update: Microservice (e.g. eventHandlerService) do subscribeEvent, instead messageBus
+     */
 
     @Test
     public void testRegister() {
@@ -168,6 +196,10 @@ public class MessageBusTest {
         }
     }
 
+    /**
+     * Test Update: Microservice (e.g. eventHandlerService) do subscribeEvent, instead messageBus
+     */
+
     @Test
     public void testUnregister() {
         messageSenderService = new ExampleMessageSenderService("messageSenderService", new String[]{"event"});
@@ -187,6 +219,10 @@ public class MessageBusTest {
             assertTrue(true);
         }
     }
+
+    /**
+     * Test Update: Microservice (e.g. eventHandlerService) do subscribeEvent, instead messageBus
+     */
 
     @Test
     public void testAwaitMessage() {

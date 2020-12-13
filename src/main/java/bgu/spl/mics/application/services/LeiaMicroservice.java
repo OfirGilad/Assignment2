@@ -30,7 +30,6 @@ public class LeiaMicroservice extends MicroService {
         super("Leia");
 		this.attacks = attacks;
 		this.attackEvents = new AttackEvent[attacks.length];
-		//this.futureAttacks = new Future[attacks.length];
         diary = Diary.getInstance();
         bombDestroyerEventResult = false;
         futureAttacksMap = new HashMap<>();
@@ -82,10 +81,15 @@ public class LeiaMicroservice extends MicroService {
             }
         }
         System.out.println("The attacks on the star destroyer ship have finished");
+        System.out.println("A DeactivationEvent was sent to R2D2");
 
-        //BombDestroyer Phase (Lando sends Deactivation request to R2D2)
+        //Deactivation Phase (Leia send the DeactivationEvent to R2D2 and the related future to Lando to check)
+        DeactivationEvent deactivationEvent = new DeactivationEvent(super.getName());
+        Future<Boolean> R2D2Result = sendEvent(deactivationEvent);
+
+        //BombDestroyer Phase (Lando gets R2D2 result from the future sent by the BombDestroyerEvent)
         while (!bombDestroyerEventResult) {
-            BombDestroyerEvent bombDestroyerEvent = new BombDestroyerEvent(super.getName());
+            BombDestroyerEvent bombDestroyerEvent = new BombDestroyerEvent(super.getName(), R2D2Result);
             Future<Boolean> eventResult = sendEvent(bombDestroyerEvent);
             bombDestroyerEventResult = eventResult.get();
         }

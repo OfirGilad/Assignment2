@@ -34,17 +34,16 @@ public class C3POMicroservice extends MicroService {
         subscribeEvent(AttackEvent.class, eventCallBack -> {
             System.out.println(getName() + " received an AttackEvent");
             Attack C3POAttack = eventCallBack.getAttack();
+            C3POAttack.getSerials().sort(Integer::compareTo);
             if (ewoks.acquireEwoks(C3POAttack.getSerials())) {
                 try {
                     System.out.println(getName() + " started an AttackEvent");
-                    System.out.println("The ewoks have joined the AttackEvent");
                     Thread.sleep(C3POAttack.getDuration());
                     diary.setC3POFinish(System.currentTimeMillis());
                     System.out.println(getName() + " completed the AttackEvent");
-                    System.out.println("The ewoks have left the AttackEvent");
-                    ewoks.releaseEwoks(C3POAttack.getSerials());
                     diary.setNumberOfAttacks(diary.getNumberOfAttacks().get() + 1);
                     complete(eventCallBack, true);
+                    ewoks.releaseEwoks(C3POAttack.getSerials());
                 } catch (InterruptedException e) {
                     System.out.println(getName() + " failed to complete the AttackEvent, aborting mission...");
                     ewoks.releaseEwoks(C3POAttack.getSerials());
