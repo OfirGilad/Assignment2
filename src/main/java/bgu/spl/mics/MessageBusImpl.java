@@ -33,7 +33,6 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		//TODO:check if micrcoservice in registered
 		round_robin.putIfAbsent(type, new LinkedBlockingQueue<>());
 		round_robin.get(type).add(m);
 		services.get(m).subscribed_event.offer(type);
@@ -41,7 +40,6 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		//TODO:check if micrcoservice in registered
 		broadcast_services.putIfAbsent(type, new LinkedBlockingQueue<>());
 		if (!broadcast_services.get(type).contains(m))
 			broadcast_services.get(type).add(m);
@@ -59,7 +57,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void sendBroadcast(Broadcast b) {
 		for(MicroService m : this.broadcast_services.get(b.getClass()))
-			this.services.get(m).messageQ.add(b);// maybe offer inted of add (need to check)
+			this.services.get(m).messageQ.add(b);
 	}
 
 	@Override
