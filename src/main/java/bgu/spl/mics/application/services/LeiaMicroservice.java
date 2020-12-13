@@ -58,7 +58,6 @@ public class LeiaMicroservice extends MicroService {
             }
             catch (InterruptedException e) {
                 System.out.println(getName() + " failed while waiting for other microservices to complete subscriptions, retrying to wait again...");
-                e.printStackTrace();
             }
         }
         System.out.println(getName() + " has joined the channel");
@@ -81,7 +80,6 @@ public class LeiaMicroservice extends MicroService {
                     }
                 }
             }
-
         }
         System.out.println("The attacks on the star destroyer ship have finished");
 
