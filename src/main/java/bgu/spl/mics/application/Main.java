@@ -63,7 +63,6 @@ public class Main {
 		System.out.println("Mission Complete!~");
 		System.out.println("A time of peace has returned to the galaxy, until the next time another threat will show up...");
 
-
 		//String output_path = args[1];
 		String output_path = "Output.json";
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
