@@ -37,16 +37,22 @@ public class Ewoks {
 
         //Checking if all needed ewoks are available
         while (ewokIndex < ewokSerialNumbers.size()) {
-            try {
 
-                //If at least one needed ewok is unavailable, entering waiting room (at Ewok class)
-                //InterruptedException causing a mission failure
-                ewoks[ewokSerialNumbers.get(ewokIndex) - 1].tryAcquire();
+            //Duplicate ewok number check (if in serials there are 2 or more ewoks with the same number, counting them as one)
+            if (ewokIndex > 0 && ewokSerialNumbers.get(ewokIndex - 1).equals(ewokSerialNumbers.get(ewokIndex))) {
                 ewokIndex++;
             }
-            catch (InterruptedException e) {
-                releaseEwoks(ewokSerialNumbers);
-                return false;
+            else {
+                try {
+
+                    //If at least one needed ewok is unavailable, entering waiting room (at Ewok class)
+                    //InterruptedException causing a mission failure
+                    ewoks[ewokSerialNumbers.get(ewokIndex) - 1].tryAcquire();
+                    ewokIndex++;
+                } catch (InterruptedException e) {
+                    releaseEwoks(ewokSerialNumbers);
+                    return false;
+                }
             }
         }
         return true;
